@@ -1,0 +1,28 @@
+# Exclude training data
+data/
+dataset/
+runs/
+prev version/
+
+# Exclude temporary outputs
+backend/outputs/temp_crops/
+backend/outputs/*.pdf
+
+# Exclude unnecessary files
+*.iml
+install_dependencies.*
+quick_install.*
+start_server.py
+README_SERVER.md
+QUICK_START.md
+guitar_tabs.pdf
+
+# Exclude siamese model (not used)
+backend/models/siamese_tabs.pt
+backend/siamese_infer.py
+backend/training/
+backend/tools/
+
+# Keep only essential model
+# backend/models/best.pt (included)
+

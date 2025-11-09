@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Guitar Tab Extractor</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange: #FFA400;
+            --celestial-blue: #009FFD;
+            --royal-blue: #2A2A72;
+            --raisin-black: #232528;
+            --alice-blue: #EAF6FF;
+            --text-light: #ffffff;
+            --text-muted: #a0a0a0;
+            --bg-dark: var(--raisin-black);
+            --bg-card: rgba(42, 42, 114, 0.3);
+            --border: rgba(0, 159, 253, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--royal-blue);
+            background-attachment: fixed;
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: left;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--orange);
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 20px rgba(255, 164, 0, 0.5));
+        }
+
+        .subtitle {
+            color: var(--alice-blue);
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .guitar-icon {
+            display: inline-block;
+            font-size: 2.5rem;
+            margin: 0 0.5rem;
+            filter: drop-shadow(0 0 15px rgba(255, 164, 0, 0.8));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .description-section {
+            background: rgba(42, 42, 114, 0.4);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+        }
+
+        .description-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--orange);
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .description-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--alice-blue);
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .coming-soon {
+            display: inline-block;
+            background: var(--orange);
+            color: var(--raisin-black);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+            box-shadow: 0 4px 15px rgba(255, 164, 0, 0.4);
+        }
+
+        .useful-links {
+            display: flex;
+            justify-content: flex-start;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .useful-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--celestial-blue);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--celestial-blue);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: rgba(0, 159, 253, 0.1);
+            font-weight: 600;
+        }
+
+        .useful-link:hover {
+            background: var(--celestial-blue);
+            color: var(--raisin-black);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 159, 253, 0.4);
+        }
+
+        .useful-link-icon {
+            font-size: 1.2rem;
+        }
+
+        .upload-section {
+            background: rgba(42, 42, 114, 0.4);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: left;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(42, 42, 114, 0.1);
+        }
+
+        .upload-area:hover {
+            border-color: var(--orange);
+            background: rgba(255, 164, 0, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(255, 164, 0, 0.3);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--celestial-blue);
+            background: rgba(0, 159, 253, 0.15);
+            box-shadow: 0 0 40px rgba(0, 159, 253, 0.4);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-label {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--orange);
+            color: var(--raisin-black);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 164, 0, 0.4);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .upload-label:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 164, 0, 0.6);
+            background: var(--celestial-blue);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--orange);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 164, 0, 0.6);
+            border-radius: 4px;
+        }
+
+        .status {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(42, 42, 114, 0.3);
+            border-radius: 12px;
+            border-left: 4px solid var(--orange);
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .gallery-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .gallery-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--orange);
+        }
+
+        .selection-info {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .screenshot-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .screenshot-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .screenshot-card.selected {
+            border-color: var(--orange);
+            box-shadow: 0 0 30px rgba(255, 164, 0, 0.6);
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .screenshot-card.selected::before {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--orange);
+            color: var(--raisin-black);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(255, 164, 0, 0.6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .screenshot-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: var(--bg-dark);
+            display: block;
+        }
+
+        .screenshot-info {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .screenshot-timestamp {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-start;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--orange);
+            color: var(--raisin-black);
+            box-shadow: 0 4px 20px rgba(255, 164, 0, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 164, 0, 0.6);
+            background: var(--celestial-blue);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--orange);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .upload-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <span class="guitar-icon">🎸</span>
+                Guitar Tab Extractor
+                <span class="guitar-icon">🎸</span>
+            </h1>
+            <p class="subtitle">Extract and compose guitar tabs from video screenshots</p>
+        </header>
+
+        <div class="description-section">
+            <div class="description-content">
+                <h2 class="description-title">Why Use Guitar Tab Extractor?</h2>
+                <p class="description-text">
+                    Sometimes YouTubers don't post the entire tab for free or not post them at all. 
+                    You could screenshot it yourself, but why not let AI do it for you? 
+                    Upload your video and select the lines you wanted to add!
+                    <span class="coming-soon">Auto Selection Feature Coming Soon!</span>
+                </p>
+                <div class="useful-links">
+                    <a href="https://www.xiwnn.com/tiaoyin/guitar" target="_blank" rel="noopener noreferrer" class="useful-link">
+                        <span class="useful-link-icon">🎵</span>
+                        Online Guitar Tuner
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <p style="margin-bottom: 1.5rem; font-size: 1.1rem; text-align: left;">Drop your video here or click to browse</p>
+                <label for="fileInput" class="upload-label">
+                    Choose Video File
+                </label>
+                <input type="file" id="fileInput" accept="video/*" />
+            </div>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="status" id="status"></div>
+        </div>
+
+        <div class="gallery-section" id="gallerySection">
+            <div class="gallery-header">
+                <h2 class="gallery-title">Select Screenshots to Include</h2>
+                <div class="selection-info" id="selectionInfo">0 selected</div>
+            </div>
+            <div class="gallery-grid" id="galleryGrid"></div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="selectAllBtn">Select All</button>
+                <button class="btn btn-secondary" id="deselectAllBtn">Deselect All</button>
+                <button class="btn btn-primary" id="createPdfBtn" disabled>
+                    Create PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration - Auto-detect API URL
+        // For local development: use http://127.0.0.1:8000
+        // For production: set API_BASE_URL environment variable or use relative URL
+        const API_URL = (() => {
+            // Check if we're in production (hosted on a domain)
+            const hostname = window.location.hostname;
+            if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+                // In production, use the backend URL from environment or default
+                // You can set this via a meta tag or environment variable
+                const metaApiUrl = document.querySelector('meta[name="api-url"]');
+                if (metaApiUrl) {
+                    return metaApiUrl.getAttribute('content');
+                }
+                // Default: assume backend is on same domain with /api prefix or separate subdomain
+                // Update this to match your backend deployment URL
+                return 'https://guitar-tab-backend.onrender.com'; // Replace with your Render backend URL
+            }
+            // Local development
+            return 'http://127.0.0.1:8000';
+        })();
+        let currentSessionId = null;
+        let screenshots = [];
+        let selectedIndices = new Set();
+
+        // Check server connection on page load
+        async function checkServerConnection() {
+            try {
+                // Try to access the API docs endpoint to verify server is running
+                const response = await fetch(`${API_URL}/docs`, { 
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                if (response.ok || response.status === 200) {
+                    // Server is running, hide any error status
+                    const currentStatus = statusEl.textContent;
+                    if (currentStatus.includes('Server not detected')) {
+                        hideStatus();
+                    }
+                }
+            } catch (error) {
+                // Server is not reachable
+                showStatus(`⚠️ Server not detected at ${API_URL}. Please start the server first. Run: python start_server.py`, true);
+            }
+        }
+
+        // Check connection when page loads
+        window.addEventListener('load', () => {
+            checkServerConnection();
+        });
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+        const statusEl = document.getElementById('status');
+        const gallerySection = document.getElementById('gallerySection');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const selectionInfo = document.getElementById('selectionInfo');
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        const deselectAllBtn = document.getElementById('deselectAllBtn');
+        const createPdfBtn = document.getElementById('createPdfBtn');
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('video/')) {
+                fileInput.files = files;
+                handleUpload(files[0]);
+            }
+        });
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleUpload(e.target.files[0]);
+            }
+        });
+
+        function showStatus(message, isError = false) {
+            statusEl.textContent = message;
+            statusEl.style.display = 'block';
+            statusEl.style.borderLeftColor = isError ? 'var(--highlight)' : 'var(--guitar-gold)';
+        }
+
+        function hideStatus() {
+            statusEl.style.display = 'none';
+        }
+
+        async function handleUpload(file) {
+            hideStatus();
+            progressBar.style.display = 'block';
+            progressFill.style.width = '0%';
+            showStatus('Uploading video...');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const xhr = new XMLHttpRequest();
+                
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        progressFill.style.width = percent + '%';
+                    }
+                });
+
+                xhr.onload = async () => {
+                    progressBar.style.display = 'none';
+                    
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        currentSessionId = response.session_id;
+                        screenshots = response.screenshots;
+                        
+                        showStatus(`Extracted ${screenshots.length} screenshots!`, false);
+                        displayScreenshots();
+                    } else {
+                        const error = JSON.parse(xhr.responseText);
+                        showStatus(`Error: ${error.detail || 'Upload failed'}`, true);
+                    }
+                };
+
+                xhr.onerror = () => {
+                    progressBar.style.display = 'none';
+                    showStatus(`Network error. Make sure the server is running on ${API_URL}. Run: uvicorn backend.app:app --reload`, true);
+                };
+
+                xhr.ontimeout = () => {
+                    progressBar.style.display = 'none';
+                    showStatus('Request timed out. The server may be processing a large file.', true);
+                };
+
+                xhr.timeout = 300000; // 5 minutes timeout for large videos
+
+                xhr.open('POST', `${API_URL}/process`);
+                xhr.send(formData);
+            } catch (error) {
+                progressBar.style.display = 'none';
+                showStatus(`Error: ${error.message}`, true);
+            }
+        }
+
+        function displayScreenshots() {
+            gallerySection.style.display = 'block';
+            galleryGrid.innerHTML = '';
+            selectedIndices.clear();
+            updateSelectionInfo();
+            createPdfBtn.disabled = true;
+
+            screenshots.forEach((screenshot, index) => {
+                const card = document.createElement('div');
+                card.className = 'screenshot-card';
+                card.dataset.index = screenshot.index;
+
+                card.innerHTML = `
+                    <img src="data:image/png;base64,${screenshot.image}" 
+                         alt="Screenshot ${screenshot.index}" 
+                         class="screenshot-image" />
+                    <div class="screenshot-info">
+                        <div class="screenshot-timestamp">
+                            Time: ${screenshot.timestamp}s
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => toggleSelection(screenshot.index, card));
+                galleryGrid.appendChild(card);
+            });
+        }
+
+        function toggleSelection(index, card) {
+            if (selectedIndices.has(index)) {
+                selectedIndices.delete(index);
+                card.classList.remove('selected');
+            } else {
+                selectedIndices.add(index);
+                card.classList.add('selected');
+            }
+            updateSelectionInfo();
+            createPdfBtn.disabled = selectedIndices.size === 0;
+        }
+
+        function updateSelectionInfo() {
+            selectionInfo.textContent = `${selectedIndices.size} of ${screenshots.length} selected`;
+        }
+
+        selectAllBtn.addEventListener('click', () => {
+            screenshots.forEach(s => selectedIndices.add(s.index));
+            document.querySelectorAll('.screenshot-card').forEach(card => {
+                card.classList.add('selected');
+            });
+            updateSelectionInfo();
+            createPdfBtn.disabled = false;
+        });
+
+        deselectAllBtn.addEventListener('click', () => {
+            selectedIndices.clear();
+            document.querySelectorAll('.screenshot-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            updateSelectionInfo();
+            createPdfBtn.disabled = true;
+        });
+
+        createPdfBtn.addEventListener('click', async () => {
+            if (selectedIndices.size === 0 || !currentSessionId) return;
+
+            createPdfBtn.disabled = true;
+            createPdfBtn.innerHTML = '<span class="loading"></span>Creating PDF...';
+
+            try {
+                const response = await fetch(`${API_URL}/create-pdf`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        session_id: currentSessionId,
+                        selected_indices: Array.from(selectedIndices)
+                    })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'guitar_tabs.pdf';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    showStatus('PDF created successfully! ✅', false);
+                } else {
+                    const error = await response.json();
+                    showStatus(`Error: ${error.detail || 'PDF creation failed'}`, true);
+                }
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, true);
+            } finally {
+                createPdfBtn.disabled = false;
+                createPdfBtn.textContent = 'Create PDF';
+            }
+        });
+    </script>
+</body>
+</html>

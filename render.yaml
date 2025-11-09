@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: guitar-tab-backend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements-deploy.txt
+    startCommand: uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+    healthCheckPath: /docs
+
