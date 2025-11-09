@@ -4,6 +4,13 @@
 [build]
   publish = "frontend"
   command = "echo 'No build needed - static HTML site'"
+  # Explicitly disable Python detection
+  ignore = "backend/**"
+
+[build.environment]
+  # Disable Python detection
+  PYTHON_VERSION = ""
+  NODE_VERSION = "18"
 
 [[redirects]]
   from = "/*"
