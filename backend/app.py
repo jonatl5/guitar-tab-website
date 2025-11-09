@@ -1,6 +1,6 @@
 # backend/app.py
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
@@ -11,7 +11,11 @@ from typing import List, Dict
 
 from backend.pipeline import extract_screenshots, create_pdf_from_selected
 
-app = FastAPI()
+app = FastAPI(
+    title="Guitar Tab Extractor API",
+    description="Extract and compose guitar tabs from video screenshots",
+    version="1.0.0"
+)
 
 # CORS configuration - allow frontend origin from environment variable
 frontend_url = os.getenv("FRONTEND_URL", "*")
@@ -25,6 +29,21 @@ app.add_middleware(
 
 # In-memory session store (in production, use Redis or database)
 sessions: Dict[str, Dict] = {}
+
+
+@app.get("/")
+async def root():
+    """Root endpoint - API information."""
+    return JSONResponse({
+        "message": "Guitar Tab Extractor API",
+        "version": "1.0.0",
+        "endpoints": {
+            "docs": "/docs",
+            "process": "/process (POST)",
+            "create_pdf": "/create-pdf (POST)"
+        },
+        "status": "running"
+    })
 
 
 class CreatePDFRequest(BaseModel):
