@@ -1,0 +1,17 @@
+# Netlify configuration for frontend deployment
+# This is a static HTML site - no build process needed
+
+[build]
+  base = "."
+  publish = "frontend"
+  command = "echo 'No build needed - static HTML site'"
+
+# Ignore all backend files
+[build.ignore]
+  directory = "backend"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
