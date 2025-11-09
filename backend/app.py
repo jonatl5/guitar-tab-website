@@ -19,13 +19,24 @@ app = FastAPI(
 
 # CORS configuration - allow frontend origin from environment variable
 frontend_url = os.getenv("FRONTEND_URL", "*")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[frontend_url] if frontend_url != "*" else ["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+if frontend_url == "*":
+    # When allowing all origins, credentials must be False
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    # When specifying a specific origin, we can use credentials
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[frontend_url],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 # In-memory session store (in production, use Redis or database)
 sessions: Dict[str, Dict] = {}
