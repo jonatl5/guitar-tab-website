@@ -1,4 +1,4 @@
-# Exclude training data
+﻿# Exclude training data
 data/
 dataset/
 runs/
@@ -17,12 +17,10 @@ README_SERVER.md
 QUICK_START.md
 guitar_tabs.pdf
 
-# Exclude siamese model (not used)
-backend/models/siamese_tabs.pt
-backend/siamese_infer.py
+# Exclude offline training scripts (runtime does not need them)
 backend/training/
 backend/tools/
 
-# Keep only essential model
-# backend/models/best.pt (included)
-
+# Keep runtime model files under backend/models/
+# Keep backend/siamese_infer.py for duplicate filtering
+# Keep backend/models/best.pt (YOLO detector)

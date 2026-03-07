@@ -1,4 +1,4 @@
-# Minimal requirements for deployment
+﻿# Minimal requirements for deployment
 # Only essential packages needed to run the application
 
 # Web framework
@@ -11,10 +11,12 @@ opencv-python==4.11.0.86
 pillow==11.3.0
 numpy==1.26.4
 
-# ML model (YOLO for tab detection)
+# ML models
 ultralytics==8.3.214
+torch==2.2.2
+yt-dlp
+# Note: ffmpeg must be installed on the system for yt-dlp MP4 merge.
 
 # Core dependencies
 pydantic==2.12.2
 starlette==0.48.0
-

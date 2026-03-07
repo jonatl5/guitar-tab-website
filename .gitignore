@@ -1,0 +1,53 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Training data and outputs (not needed for deployment)
+data/
+dataset/
+runs/
+backend/outputs/temp_crops/
+backend/outputs/*.pdf
+backend/outputs/export_crops.py
+
+# Old versions
+prev version/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+guitar_tabs.pdf
+*.pdf
+
+# Model files (generated Siamese checkpoint)
+backend/models/siamese_cnn.pt
+
+# Installation scripts (not needed in deployment)
+install_dependencies.*
+quick_install.*
+start_server.py
+
+# Documentation (keep deployment docs)
+# README_SERVER.md  # Keep for reference
+# QUICK_START.md    # Keep for reference
+# DEPLOYMENT.md     # Keep - needed for deployment
+# prepare-deployment.md  # Keep - needed for deployment
+# README.md         # Keep - main readme
+
+

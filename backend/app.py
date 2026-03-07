@@ -2,7 +2,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 from pathlib import Path
 from uuid import uuid4
 import tempfile
@@ -10,6 +10,7 @@ import os
 from typing import List, Dict
 
 from backend.pipeline import extract_screenshots, create_pdf_from_selected
+from backend.downloader import download_video
 
 app = FastAPI(
     title="Guitar Tab Extractor API",
@@ -51,6 +52,7 @@ async def root():
         "endpoints": {
             "docs": "/docs",
             "process": "/process (POST)",
+            "process_url": "/process-url (POST)",
             "create_pdf": "/create-pdf (POST)"
         },
         "status": "running"
@@ -60,6 +62,34 @@ async def root():
 class CreatePDFRequest(BaseModel):
     session_id: str
     selected_indices: List[int]
+
+
+class ProcessURLRequest(BaseModel):
+    url: HttpUrl
+    output_dir: str = "data/videos/"
+
+
+def _process_video_path(video_path: str, session_id: str) -> Dict:
+    screenshots, crops_dir = extract_screenshots(video_path, session_id)
+
+    response_screenshots = [
+        {
+            "index": s["index"],
+            "image": s["image"],
+            "timestamp": s["timestamp"],
+        }
+        for s in screenshots
+    ]
+
+    sessions[session_id] = {
+        "screenshots": screenshots,  # Full data with crop_path
+        "crops_dir": crops_dir,
+    }
+
+    return {
+        "session_id": session_id,
+        "screenshots": response_screenshots,
+    }
 
 
 @app.post("/process")
@@ -87,32 +117,29 @@ async def process(file: UploadFile = File(...)):
 
     # 5) Extract screenshots
     try:
-        screenshots, crops_dir = extract_screenshots(str(dest), session_id)
-        
-        # Store session data (remove crop_path from response, keep only metadata)
-        response_screenshots = [
-            {
-                'index': s['index'],
-                'image': s['image'],
-                'timestamp': s['timestamp']
-            }
-            for s in screenshots
-        ]
-        
-        sessions[session_id] = {
-            'screenshots': screenshots,  # Full data with crop_path
-            'crops_dir': crops_dir
-        }
-        
+        result = _process_video_path(str(dest), session_id)
+
         # Clean up video file
         dest.unlink(missing_ok=True)
-        
-        return {
-            "session_id": session_id,
-            "screenshots": response_screenshots
-        }
+
+        return result
     except Exception as e:
         dest.unlink(missing_ok=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/process-url")
+async def process_url(request: ProcessURLRequest):
+    """
+    Download a video from URL, then extract screenshots from it.
+    """
+    session_id = uuid4().hex
+    try:
+        downloaded_video = download_video(str(request.url), request.output_dir)
+        result = _process_video_path(downloaded_video, session_id)
+        result["video_path"] = downloaded_video
+        return result
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 

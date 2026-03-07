@@ -1,0 +1,56 @@
+﻿FILES TO UPLOAD TO GITHUB FOR DEPLOYMENT
+=========================================
+
+Copy these files/folders to your GitHub repository:
+
+ESSENTIAL FILES:
+---------------
+backend/
+  __init__.py
+  app.py
+  detector.py
+  pipeline.py
+  models/
+    best.pt          (REQUIRED - YOLO model)
+
+frontend/
+  index.html
+
+DEPLOYMENT CONFIG FILES:
+------------------------
+requirements-deploy.txt
+render.yaml
+Procfile
+runtime.txt
+.renderignore
+.gitignore
+netlify.toml
+vercel.json
+
+DOCUMENTATION (Optional but recommended):
+------------------------------------------
+README.md
+DEPLOYMENT.md
+prepare-deployment.md
+
+DO NOT UPLOAD:
+--------------
+- data/ folder
+- dataset/ folder  
+- runs/ folder
+- prev version/ folder
+- backend/outputs/temp_crops/
+- backend/outputs/*.pdf
+- backend/models/siamese_cnn.pt
+- backend/training/ folder
+- backend/tools/ folder
+- install_dependencies.*
+- quick_install.*
+- start_server.py
+- guitar_tabs.pdf
+- *.iml files
+- __pycache__/ folders
+
+TOTAL SIZE: ~50-100MB (mostly the best.pt model file)
+
+
