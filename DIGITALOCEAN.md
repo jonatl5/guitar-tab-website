@@ -11,11 +11,9 @@ That means the browser can use same-origin requests to `/api`, which keeps produ
 ## Before You Deploy
 
 1. Push this repo to GitHub or GitLab.
-2. Update the placeholder repo URL in `.do/deploy.template.yaml`.
+2. Confirm `.do/deploy.template.yaml` points at the real repo URL:
 
-Current placeholders:
-
-- `https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME.git`
+- `https://github.com/jonatl5/guitar-tab-website.git`
 
 ## App Platform Setup
 
