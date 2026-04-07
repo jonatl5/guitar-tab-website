@@ -1,49 +1,74 @@
-﻿FILES TO UPLOAD TO GITHUB FOR DEPLOYMENT
+FILES TO UPLOAD TO GITHUB FOR DEPLOYMENT
 =========================================
 
 Copy these files/folders to your GitHub repository:
 
-ESSENTIAL FILES:
----------------
+ESSENTIAL RUNTIME FILES:
+------------------------
 backend/
   __init__.py
   app.py
   detector.py
+  downloader.py
   pipeline.py
+  siamese_infer.py
+  siamese_model.py
   models/
-    best.pt          (REQUIRED - YOLO model)
+    best.pt          (REQUIRED - YOLO detector model)
 
 frontend/
-  index.html
+  app/
+  components/
+  hooks/
+  lib/
+  public/
+  styles/
+  .env.example
+  .gitignore
+  components.json
+  next-env.d.ts
+  next.config.mjs
+  package.json
+  package-lock.json
+  postcss.config.mjs
+  tsconfig.json
 
-DEPLOYMENT CONFIG FILES:
-------------------------
+DEPLOYMENT / CONFIG FILES:
+--------------------------
+.gitignore
+.renderignore
+requirements.txt
 requirements-deploy.txt
 render.yaml
 Procfile
 runtime.txt
-.renderignore
-.gitignore
 netlify.toml
 vercel.json
+.do/deploy.template.yaml
 
-DOCUMENTATION (Optional but recommended):
-------------------------------------------
+DOCUMENTATION:
+--------------
 README.md
+README_SERVER.md
+QUICK_START.md
 DEPLOYMENT.md
+DIGITALOCEAN.md
 prepare-deployment.md
 
 DO NOT UPLOAD:
 --------------
 - data/ folder
-- dataset/ folder  
+- dataset/ folder
+- dataset_labelstudio_20260310/ folder
 - runs/ folder
 - prev version/ folder
 - backend/outputs/temp_crops/
 - backend/outputs/*.pdf
-- backend/models/siamese_cnn.pt
 - backend/training/ folder
 - backend/tools/ folder
+- frontend/node_modules/
+- frontend/.next/
+- .deploy_repo/
 - install_dependencies.*
 - quick_install.*
 - start_server.py
@@ -51,6 +76,9 @@ DO NOT UPLOAD:
 - *.iml files
 - __pycache__/ folders
 
-TOTAL SIZE: ~50-100MB (mostly the best.pt model file)
-
-
+NOTES:
+------
+- The website now uses a Next.js frontend instead of the old static `frontend/index.html`.
+- The backend supports both uploaded videos and YouTube URL processing.
+- The only required model for core runtime is `backend/models/best.pt`.
+- `backend/models/siamese_cnn.pt` is optional at runtime; if missing, duplicate filtering is disabled.

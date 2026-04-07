@@ -1,0 +1,46 @@
+spec:
+  name: guitar-tab-app
+  region: nyc
+  services:
+    - name: frontend
+      environment_slug: node-js
+      source_dir: frontend
+      git:
+        branch: main
+        repo_clone_url: https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME.git
+      build_command: npm ci && npm run build
+      run_command: npm start
+      http_port: 8080
+      instance_count: 1
+      instance_size_slug: basic-xxs
+      health_check:
+        http_path: /
+    - name: backend
+      environment_slug: python
+      source_dir: .
+      git:
+        branch: main
+        repo_clone_url: https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME.git
+      build_command: pip install -r requirements-deploy.txt
+      run_command: uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+      http_port: 8080
+      instance_count: 1
+      instance_size_slug: basic-xxs
+      health_check:
+        http_path: /
+      envs:
+        - key: FRONTEND_URL
+          scope: RUN_TIME
+          value: ${APP_URL}
+  ingress:
+    rules:
+      - match:
+          path:
+            prefix: /api
+        component:
+          name: backend
+      - match:
+          path:
+            prefix: /
+        component:
+          name: frontend

@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from pathlib import Path
 from typing import Optional
@@ -56,7 +56,8 @@ class SiameseComparator:
         if bgr_image is None or bgr_image.size == 0:
             raise ValueError("Input crop is empty.")
 
-        gray = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2GRAY)
+        cleaned = self._remove_indicator_overlay(bgr_image)
+        gray = cv2.cvtColor(cleaned, cv2.COLOR_BGR2GRAY)
         resized = cv2.resize(
             gray,
             (IMAGE_SIZE[1], IMAGE_SIZE[0]),
@@ -65,6 +66,29 @@ class SiameseComparator:
         tensor = torch.from_numpy(resized).float().div(255.0)
         tensor = tensor.unsqueeze(0).unsqueeze(0)
         return tensor.to(self.device)
+
+    @staticmethod
+    def _remove_indicator_overlay(bgr_image: np.ndarray) -> np.ndarray:
+        hsv = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
+
+        # Bright yellow indicator range
+        yellow_lower = np.array([15, 60, 120], dtype=np.uint8)
+        yellow_upper = np.array([45, 255, 255], dtype=np.uint8)
+        yellow_mask = cv2.inRange(hsv, yellow_lower, yellow_upper)
+
+        # Bright blue indicator range
+        blue_lower = np.array([85, 50, 80], dtype=np.uint8)
+        blue_upper = np.array([135, 255, 255], dtype=np.uint8)
+        blue_mask = cv2.inRange(hsv, blue_lower, blue_upper)
+
+        indicator_mask = cv2.bitwise_or(yellow_mask, blue_mask)
+
+        # Remove isolated noise, then slightly expand to cover indicator edges.
+        kernel = np.ones((3, 3), np.uint8)
+        indicator_mask = cv2.morphologyEx(indicator_mask, cv2.MORPH_OPEN, kernel, iterations=1)
+        indicator_mask = cv2.dilate(indicator_mask, kernel, iterations=1)
+
+        return cv2.inpaint(bgr_image, indicator_mask, 3, cv2.INPAINT_TELEA)
 
     def embed(self, bgr_image: np.ndarray) -> torch.Tensor:
         x = self._preprocess(bgr_image)

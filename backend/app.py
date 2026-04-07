@@ -20,7 +20,9 @@ app = FastAPI(
 
 # CORS configuration - allow frontend origin from environment variable
 frontend_url = os.getenv("FRONTEND_URL", "*")
-if frontend_url == "*":
+allowed_origins = [origin.strip() for origin in frontend_url.split(",") if origin.strip()]
+
+if frontend_url == "*" or not allowed_origins:
     # When allowing all origins, credentials must be False
     app.add_middleware(
         CORSMiddleware,
@@ -33,7 +35,7 @@ else:
     # When specifying a specific origin, we can use credentials
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[frontend_url],
+        allow_origins=allowed_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
