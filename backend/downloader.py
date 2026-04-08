@@ -47,27 +47,36 @@ def download_video(
         elif status == "finished":
             _emit(100.0, "Download complete, finalizing file...")
 
-    def _ydl_opts() -> dict:
-        extractor_args = {}
-        if _is_youtube_url(normalized_url):
-            # Prefer client profiles that are more resilient to YouTube rate limits.
-            extractor_args["youtube"] = {"player_client": ["android", "mweb", "web"]}
-
+    def _ydl_opts(
+        *,
+        use_default_youtube_format: bool = False,
+        use_youtube_clients: bool = False,
+    ) -> dict:
         opts = {
-            # The pipeline only needs frames, so we prefer video-only streams.
-            # This avoids ffmpeg merge requirements on platforms like Bilibili.
-            "format": "bestvideo[ext=mp4]/bestvideo/best[ext=mp4]/bestvideo/best",
             "outtmpl": str(out_dir / "%(title)s.%(ext)s"),
             "noplaylist": True,
             "quiet": True,
             "progress_hooks": [_progress_hook],
             "retries": 5,
             "fragment_retries": 5,
-            "extractor_args": extractor_args,
         }
 
         if cookies_file:
             opts["cookiefile"] = cookies_file
+
+        if _is_youtube_url(normalized_url):
+            if use_youtube_clients:
+                # Prefer client profiles that are more resilient to YouTube rate limits.
+                opts["extractor_args"] = {"youtube": {"player_client": ["android", "mweb", "web"]}}
+
+            if not use_default_youtube_format:
+                # Prefer single-file progressive formats when possible, but avoid failing
+                # hard if a specific mp4 flavor is unavailable.
+                opts["format"] = "best[ext=mp4]/best"
+        else:
+            # The pipeline only needs frames, so we prefer a direct downloadable video file.
+            # This avoids ffmpeg merge requirements on platforms like Bilibili.
+            opts["format"] = "bestvideo[ext=mp4]/bestvideo/best[ext=mp4]/bestvideo/best"
 
         return opts
 
@@ -76,8 +85,46 @@ def download_video(
             info = ydl.extract_info(normalized_url, download=True)
             return ydl.prepare_filename(info)
 
+    def _download_with_fallbacks() -> str:
+        attempts = []
+
+        if _is_youtube_url(normalized_url):
+            if cookies_file:
+                # Cookies often work best with yt-dlp's default format selection.
+                attempts.extend(
+                    [
+                        ("youtube-default", _ydl_opts(use_default_youtube_format=True)),
+                        ("youtube-progressive", _ydl_opts()),
+                        ("youtube-client-fallback", _ydl_opts(use_youtube_clients=True)),
+                    ]
+                )
+            else:
+                attempts.extend(
+                    [
+                        ("youtube-client-fallback", _ydl_opts(use_youtube_clients=True)),
+                        ("youtube-default", _ydl_opts(use_default_youtube_format=True)),
+                        ("youtube-progressive", _ydl_opts()),
+                    ]
+                )
+        else:
+            attempts.append(("generic-default", _ydl_opts()))
+
+        last_exc: Optional[Exception] = None
+        for label, opts in attempts:
+            try:
+                print(f"[yt-dlp] Attempting download via strategy={label}")
+                return _download_with_opts(opts)
+            except Exception as exc:
+                last_exc = exc
+                print(f"[yt-dlp] Download strategy failed ({label}): {exc}")
+
+        if last_exc is None:
+            raise RuntimeError("No yt-dlp download strategies were attempted.")
+
+        raise last_exc
+
     try:
-        downloaded_path = _download_with_opts(_ydl_opts())
+        downloaded_path = _download_with_fallbacks()
     except Exception as exc:
         raise RuntimeError(_build_download_error_message(normalized_url, exc, cookies_file)) from exc
 
@@ -150,6 +197,13 @@ def _build_download_error_message(url: str, exc: Exception, has_cookies: bool) -
             "YouTube blocked anonymous server-side download for this video. "
             "Try uploading the video file directly, or configure backend env YTDLP_COOKIES_B64 "
             "(base64-encoded Netscape cookies.txt) or YTDLP_COOKIE_FILE for yt-dlp. "
+            f"Original yt-dlp error: {message}"
+        )
+
+    if _is_youtube_url(url) and "requested format is not available" in lowered:
+        return (
+            "YouTube accepted the request, but the available stream formats did not match the current server-side "
+            "download strategy. Try local upload for this video, or retry with refreshed cookies. "
             f"Original yt-dlp error: {message}"
         )
 
