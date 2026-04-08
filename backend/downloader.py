@@ -11,7 +11,12 @@ from urllib.parse import parse_qs, urlparse
 ProgressCallback = Optional[Callable[[float, str], None]]
 
 
-def download_video(url: str, output_dir: str = "data/videos/", progress_callback: ProgressCallback = None) -> str:
+def download_video(
+    url: str,
+    output_dir: str = "data/videos/",
+    progress_callback: ProgressCallback = None,
+    cookies_text: Optional[str] = None,
+) -> str:
     """
     Download a video URL to MP4 using yt-dlp and return an absolute path.
     """
@@ -26,7 +31,7 @@ def download_video(url: str, output_dir: str = "data/videos/", progress_callback
         ) from exc
 
     normalized_url = _normalize_video_url(url)
-    cookies_file = _resolve_cookie_file()
+    cookies_file = _resolve_cookie_file(cookies_text)
 
     def _emit(progress: float, message: str) -> None:
         if progress_callback is not None:
@@ -92,7 +97,15 @@ def download_video(url: str, output_dir: str = "data/videos/", progress_callback
         raise RuntimeError(f"Failed to download video from URL: {normalized_url}. Error: {exc}") from exc
 
 
-def _resolve_cookie_file() -> Optional[str]:
+def _resolve_cookie_file(cookies_text: Optional[str] = None) -> Optional[str]:
+    inline_cookies = (cookies_text or "").strip()
+    if inline_cookies:
+        temp_dir = Path(tempfile.gettempdir()) / "guitartab"
+        temp_dir.mkdir(parents=True, exist_ok=True)
+        cookie_file = temp_dir / "yt-dlp-inline-cookies.txt"
+        cookie_file.write_text(inline_cookies, encoding="utf-8")
+        return str(cookie_file)
+
     configured_path = os.getenv("YTDLP_COOKIE_FILE", "").strip()
     if configured_path:
         cookie_path = Path(configured_path)

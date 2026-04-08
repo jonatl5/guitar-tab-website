@@ -29,6 +29,42 @@ export const translations = {
     orClickToSelect: 'or click to select file (MP4, WebM, MOV, AVI)',
     youtubeVideo: 'YouTube Video',
     videoThumbnailAlt: 'Video thumbnail',
+    
+    // Upload Helpers
+    uploadRecommended: 'Recommended',
+    needToDownload: 'Need to download a video first?',
+    downloadHelperDesc: 'Advanced users can download the video locally and then upload it here.',
+    tryDownie: 'Try Downie 4',
+    downieMacOnly: 'Mac-only external app',
+    externalTool: 'External Tool',
+    
+    // Advanced Cookies
+    advancedOptions: 'Advanced Options',
+    restrictedSiteWarning: 'Some sites block automated downloads',
+    restrictedSiteDesc: 'If video downloads fail, you may need to provide cookies from your browser session.',
+    useCustomCookies: 'Use custom cookies (advanced)',
+    cookiesPlaceholder: 'Paste Netscape cookies.txt content here...',
+    clearCookies: 'Clear',
+    cookiesPrivacyNote: 'Cookies are sensitive and may grant account access. Only paste your own cookies.',
+    howToUseCookies: 'How to use cookies for restricted sites',
+    cookiesStep1: 'Sign in to the target video site in your own browser.',
+    cookiesStep2: 'Export a Netscape-format cookies.txt file using a browser extension.',
+    cookiesStep3: 'Open the file and paste the contents into the cookies field above.',
+    cookiesStep4: 'Submit the video URL again.',
+    cookiesStep5: 'If the site still blocks the request, use local upload instead.',
+    cookiesCaution: 'Caution',
+    cookiesCautionText: 'Only paste your own cookies. Avoid using shared or public devices.',
+    
+    // Desktop App Reference
+    preferLocalExtraction: 'Prefer local extraction?',
+    useDesktopApp: 'Use the desktop app',
+    desktopVersion: 'Desktop version on GitHub',
+    
+    // Video Preview
+    videoPreview: 'Video Preview',
+    watchWhileProcessing: 'Watch while processing',
+    previewNotAvailable: 'Preview not available',
+    playbackReady: 'Playback ready',
 
     // Processing State
     processingVideo: 'Processing Video',
@@ -137,6 +173,42 @@ export const translations = {
     orClickToSelect: '或点击选择文件 (MP4, WebM, MOV, AVI)',
     youtubeVideo: 'YouTube 视频',
     videoThumbnailAlt: '视频缩略图',
+    
+    // Upload Helpers
+    uploadRecommended: '推荐',
+    needToDownload: '需要先下载视频？',
+    downloadHelperDesc: '高级用户可以先将视频下载到本地，然后上传。',
+    tryDownie: '试试 Downie 4',
+    downieMacOnly: '仅限 Mac 的外部应用',
+    externalTool: '外部工具',
+    
+    // Advanced Cookies
+    advancedOptions: '高级选项',
+    restrictedSiteWarning: '部分网站会阻止自动下载',
+    restrictedSiteDesc: '如果视频下载失败，您可能需要提供浏览器会话的 cookies。',
+    useCustomCookies: '使用自定义 cookies（高级）',
+    cookiesPlaceholder: '在此粘贴 Netscape cookies.txt 内容...',
+    clearCookies: '清除',
+    cookiesPrivacyNote: 'Cookies 是敏感信息，可能授予账户访问权限。只粘贴您自己的 cookies。',
+    howToUseCookies: '如何使用 cookies 访问受限网站',
+    cookiesStep1: '在您的浏览器中登录目标视频网站。',
+    cookiesStep2: '使用浏览器扩展导出 Netscape 格式的 cookies.txt 文件。',
+    cookiesStep3: '打开文件并将内容粘贴到上方的 cookies 输入框。',
+    cookiesStep4: '再次提交视频链接。',
+    cookiesStep5: '如果网站仍然阻止请求，请使用本地上传。',
+    cookiesCaution: '注意',
+    cookiesCautionText: '只粘贴您自己的 cookies。避免在共享或公共设备上使用。',
+    
+    // Desktop App Reference
+    preferLocalExtraction: '更喜欢本地提取？',
+    useDesktopApp: '使用桌面应用',
+    desktopVersion: 'GitHub 上的桌面版',
+    
+    // Video Preview
+    videoPreview: '视频预览',
+    watchWhileProcessing: '处理时观看',
+    previewNotAvailable: '预览不可用',
+    playbackReady: '可以播放',
 
     // Processing State
     processingVideo: '正在处理视频',

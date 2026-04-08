@@ -65,17 +65,20 @@ export async function checkHealth(): Promise<HealthResponse> {
   return response.json();
 }
 
-// Process YouTube URL
-export async function processYouTubeUrl(url: string): Promise<ProcessResponse> {
+// Process video URL
+export async function processYouTubeUrl(url: string, cookiesText?: string): Promise<ProcessResponse> {
+  const payload = {
+    url,
+    output_dir: 'data/videos/',
+    ...(cookiesText ? { cookies_text: cookiesText } : {}),
+  };
+
   const response = await fetch(`${API_BASE_URL}/process-url`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ 
-      url,
-      output_dir: 'data/videos/',
-    }),
+    body: JSON.stringify(payload),
   });
   
   const data = await response.json();

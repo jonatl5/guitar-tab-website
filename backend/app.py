@@ -7,7 +7,7 @@ from pathlib import Path
 from uuid import uuid4
 import tempfile
 import os
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from backend.pipeline import extract_screenshots, create_pdf_from_selected
 from backend.downloader import download_video
@@ -69,6 +69,7 @@ class CreatePDFRequest(BaseModel):
 class ProcessURLRequest(BaseModel):
     url: HttpUrl
     output_dir: str = "data/videos/"
+    cookies_text: Optional[str] = None
 
 
 def _process_video_path(video_path: str, session_id: str) -> Dict:
@@ -137,7 +138,11 @@ async def process_url(request: ProcessURLRequest):
     """
     session_id = uuid4().hex
     try:
-        downloaded_video = download_video(str(request.url), request.output_dir)
+        downloaded_video = download_video(
+            str(request.url),
+            request.output_dir,
+            cookies_text=request.cookies_text,
+        )
         result = _process_video_path(downloaded_video, session_id)
         result["video_path"] = downloaded_video
         return result

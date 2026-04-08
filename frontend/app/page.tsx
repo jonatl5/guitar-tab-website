@@ -59,7 +59,7 @@ export default function Home() {
 
   // App state
   const [state, setState] = useState<AppState>('idle');
-  const [sourceType, setSourceType] = useState<SourceType>('youtube');
+  const [sourceType, setSourceType] = useState<SourceType>('upload'); // Upload is now default
   const [errorMessage, setErrorMessage] = useState('');
   
   // Session data
@@ -77,6 +77,10 @@ export default function Home() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
   const [uploadedFileSize, setUploadedFileSize] = useState<number>(0);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  
+  // Video URL state for preview
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string>('');
   
   // PDF state
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
@@ -84,16 +88,18 @@ export default function Home() {
   // Session expired state
   const [sessionExpired, setSessionExpired] = useState(false);
 
-  // Process YouTube URL
-  const handleProcessUrl = useCallback(async (url: string) => {
+  // Process Video URL (YouTube, Bilibili, etc.)
+  const handleProcessUrl = useCallback(async (url: string, cookiesText?: string) => {
     setState('processing');
     setSourceType('youtube');
     setErrorMessage('');
     setPdfBlob(null);
     setSessionExpired(false);
+    setCurrentVideoUrl(url);
+    setUploadedFile(null);
     
     try {
-      const response = await processYouTubeUrl(url);
+      const response = await processYouTubeUrl(url, cookiesText);
       setSessionId(response.session_id);
       setScreenshots(response.screenshots);
       setSelectedIndices(new Set());
@@ -120,6 +126,8 @@ export default function Home() {
     setUploadProgress(0);
     setUploadedFileName(file.name);
     setUploadedFileSize(file.size);
+    setUploadedFile(file);
+    setCurrentVideoUrl('');
     setPdfBlob(null);
     setSessionExpired(false);
     
@@ -231,10 +239,12 @@ export default function Home() {
     setUploadProgress(0);
     setUploadedFileName('');
     setUploadedFileSize(0);
+    setUploadedFile(null);
+    setCurrentVideoUrl('');
     setSessionExpired(false);
   }, []);
 
-  // Switch to YouTube tab and reset for new input
+  // Switch to Video URL tab and reset for new input
   const handleSwitchToYoutube = useCallback(() => {
     setSourceType('youtube');
     setState('idle');
@@ -244,6 +254,8 @@ export default function Home() {
     setPdfBlob(null);
     setSessionExpired(false);
     setErrorMessage('');
+    setCurrentVideoUrl('');
+    setUploadedFile(null);
   }, []);
 
   // Switch to upload tab and reset for new input
@@ -259,6 +271,8 @@ export default function Home() {
     setUploadProgress(0);
     setUploadedFileName('');
     setUploadedFileSize(0);
+    setUploadedFile(null);
+    setCurrentVideoUrl('');
   }, []);
 
   // Get current preview index info
@@ -300,6 +314,8 @@ export default function Home() {
           uploadProgress={uploadProgress}
           fileName={uploadedFileName}
           fileSize={uploadedFileSize}
+          uploadedFile={uploadedFile}
+          videoUrl={currentVideoUrl}
         />
       );
     }
