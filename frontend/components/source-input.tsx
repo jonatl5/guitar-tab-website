@@ -380,6 +380,32 @@ export function SourceInput({
               )}
             </Button>
 
+            {/* Desktop App Reference - Prominent placement */}
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Monitor className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground">
+                    {t('preferLocalExtraction')}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {t('useDesktopApp')}
+                  </p>
+                </div>
+                <a
+                  href="https://github.com/jonatl5/guitar-tab-desktop"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors"
+                >
+                  GitHub
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+
             {/* Advanced Options Collapsible */}
             <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
               <CollapsibleTrigger asChild>
@@ -491,26 +517,6 @@ export function SourceInput({
                   </AccordionItem>
                 </Accordion>
 
-                {/* Desktop App Reference */}
-                <div className="rounded-lg border border-border/30 bg-secondary/20 p-4">
-                  <div className="flex items-start gap-3">
-                    <Monitor className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground mb-1">
-                        {t('preferLocalExtraction')}
-                      </p>
-                      <a
-                        href="https://github.com/jonatl5/guitar-tab-desktop"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
-                      >
-                        {t('desktopVersion')}
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
               </CollapsibleContent>
             </Collapsible>
           </TabsContent>
