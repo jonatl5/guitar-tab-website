@@ -50,6 +50,7 @@ def download_video(
     def _ydl_opts(
         *,
         use_default_youtube_format: bool = False,
+        prefer_youtube_video_stream: bool = False,
         use_youtube_clients: bool = False,
     ) -> dict:
         opts = {
@@ -69,7 +70,11 @@ def download_video(
                 # Prefer client profiles that are more resilient to YouTube rate limits.
                 opts["extractor_args"] = {"youtube": {"player_client": ["android", "mweb", "web"]}}
 
-            if not use_default_youtube_format:
+            if prefer_youtube_video_stream:
+                # The extraction pipeline only needs frames, so a single downloadable
+                # video-containing stream is better than requiring a muxed AV format.
+                opts["format"] = "bv*[ext=mp4]/bv*/b[ext=mp4]/b"
+            elif not use_default_youtube_format:
                 # Prefer single-file progressive formats when possible, but avoid failing
                 # hard if a specific mp4 flavor is unavailable.
                 opts["format"] = "best[ext=mp4]/best"
@@ -90,17 +95,27 @@ def download_video(
 
         if _is_youtube_url(normalized_url):
             if cookies_file:
-                # Cookies often work best with yt-dlp's default format selection.
+                # For frame extraction, prefer a single video stream first.
                 attempts.extend(
                     [
+                        ("youtube-video-stream", _ydl_opts(prefer_youtube_video_stream=True)),
                         ("youtube-default", _ydl_opts(use_default_youtube_format=True)),
                         ("youtube-progressive", _ydl_opts()),
+                        (
+                            "youtube-client-video-stream",
+                            _ydl_opts(prefer_youtube_video_stream=True, use_youtube_clients=True),
+                        ),
                         ("youtube-client-fallback", _ydl_opts(use_youtube_clients=True)),
                     ]
                 )
             else:
                 attempts.extend(
                     [
+                        (
+                            "youtube-client-video-stream",
+                            _ydl_opts(prefer_youtube_video_stream=True, use_youtube_clients=True),
+                        ),
+                        ("youtube-video-stream", _ydl_opts(prefer_youtube_video_stream=True)),
                         ("youtube-client-fallback", _ydl_opts(use_youtube_clients=True)),
                         ("youtube-default", _ydl_opts(use_default_youtube_format=True)),
                         ("youtube-progressive", _ydl_opts()),
