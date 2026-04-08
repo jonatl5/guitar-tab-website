@@ -6,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { Youtube, Upload, Link2, FileVideo, X, Loader2, Play } from 'lucide-react';
-import { isValidYouTubeUrl, extractYouTubeVideoId, getYouTubeThumbnail, formatFileSize } from '@/lib/helpers';
+import { Upload, Link2, FileVideo, X, Loader2, Play } from 'lucide-react';
+import { isValidVideoUrl, extractYouTubeVideoId, getYouTubeThumbnail, formatFileSize, getVideoPlatformLabel } from '@/lib/helpers';
 import { useI18n } from '@/lib/i18n';
 import type { SourceType } from '@/lib/types';
 
@@ -45,15 +45,15 @@ export function SourceInput({
       return false;
     }
     
-    if (!isValidYouTubeUrl(value)) {
-      setUrlError(t('invalidYoutubeUrl'));
-      setVideoId(null);
+    const id = extractYouTubeVideoId(value);
+    if (!isValidVideoUrl(value)) {
+      setUrlError(t('invalidVideoUrl'));
+      setVideoId(id);
       setThumbnailError(false);
       return false;
     }
-    
+
     setUrlError('');
-    const id = extractYouTubeVideoId(value);
     setVideoId(id);
     setThumbnailError(false);
     return true;
@@ -143,7 +143,7 @@ export function SourceInput({
         <Tabs value={sourceType} onValueChange={(v) => onSourceTypeChange(v as SourceType)}>
           <TabsList className="grid grid-cols-2 mb-4 bg-secondary/50">
             <TabsTrigger value="youtube" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Youtube className="w-4 h-4" />
+              <Link2 className="w-4 h-4" />
               {t('youtubeUrl')}
             </TabsTrigger>
             <TabsTrigger value="upload" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
@@ -157,7 +157,7 @@ export function SourceInput({
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <Input
-                    placeholder="https://www.youtube.com/watch?v=..."
+                    placeholder="https://www.youtube.com/watch?v=... or https://www.bilibili.com/..."
                     value={url}
                     onChange={handleUrlChange}
                     onKeyDown={(e) => e.key === 'Enter' && handleSubmitUrl()}
@@ -197,7 +197,7 @@ export function SourceInput({
                       <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-3 border border-primary/30">
                         <Play className="w-8 h-8 text-primary ml-1" />
                       </div>
-                      <span className="text-xs text-muted-foreground font-medium">{t('youtubeVideo')}</span>
+                      <span className="text-xs text-muted-foreground font-medium">{getVideoPlatformLabel(url)}</span>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />

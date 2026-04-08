@@ -40,6 +40,15 @@ You can either:
 - Runtime env:
   - `FRONTEND_URL=${APP_URL}`
 
+Optional backend env for restricted YouTube videos:
+
+- `YTDLP_COOKIES_B64`
+  - base64-encoded Netscape `cookies.txt` content for yt-dlp
+- `YTDLP_COOKIE_FILE`
+  - absolute path to a cookies file if you provide one in another way
+
+Without cookies, some YouTube videos may reject anonymous server-side downloads with a bot-check prompt. Public URLs from other supported sites such as Bilibili can still work without this.
+
 ## Ingress Rules
 
 Configure routing so the public app domain works like this:

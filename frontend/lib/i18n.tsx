@@ -16,10 +16,10 @@ export const translations = {
 
     // Source Input
     videoSource: 'Video Source',
-    youtubeUrl: 'YouTube URL',
+    youtubeUrl: 'Video URL',
     uploadVideo: 'Upload Video',
     paste: 'Paste',
-    invalidYoutubeUrl: 'Please enter a valid YouTube URL',
+    invalidVideoUrl: 'Please enter a valid video URL',
     extractTabs: 'Extract Tabs',
     extracting: 'Extracting...',
     uploading: 'Uploading...',
@@ -32,7 +32,7 @@ export const translations = {
 
     // Processing State
     processingVideo: 'Processing Video',
-    downloadingFromYoutube: 'Downloading and analyzing video from YouTube...',
+    downloadingFromYoutube: 'Downloading and analyzing video from URL...',
     analyzingUploadedVideo: 'Analyzing uploaded video...',
     processingTimeNote: 'This may take a few minutes depending on video length',
     stepDownload: 'Download Video',
@@ -67,15 +67,15 @@ export const translations = {
     creatingPdf: 'Creating...',
     downloadPdf: 'Download PDF',
     processNewVideo: 'Process New Video',
-    helpYoutubeTitle: 'YouTube URL',
-    helpYoutubeDesc: 'Paste a video link and we will download and analyze it automatically.',
+    helpYoutubeTitle: 'Video URL',
+    helpYoutubeDesc: 'Paste a public video link from YouTube, Bilibili, or another yt-dlp supported site and we will try to download and analyze it automatically.',
     helpUploadTitle: 'Local Upload',
     helpUploadDesc: 'Upload MP4, WebM, or other video formats.',
     helpSessionNote: 'Session data is stored in server memory. If you refresh the page, you will need to reprocess the video.',
 
     // Empty State
     readyToExtract: 'Ready to Extract Tabs',
-    emptyStateDesc: 'Enter a YouTube video link or upload a local video file to start extracting guitar tab screenshots',
+    emptyStateDesc: 'Enter a video link or upload a local video file to start extracting guitar tab screenshots',
 
     // Error State
     processingFailed: 'Processing Failed',
@@ -124,10 +124,10 @@ export const translations = {
 
     // Source Input
     videoSource: '视频来源',
-    youtubeUrl: 'YouTube URL',
+    youtubeUrl: '视频链接',
     uploadVideo: '上传视频',
     paste: '粘贴',
-    invalidYoutubeUrl: '请输入有效的 YouTube URL',
+    invalidVideoUrl: '请输入有效的视频链接',
     extractTabs: '提取吉他谱',
     extracting: '提取中...',
     uploading: '上传中...',
@@ -140,7 +140,7 @@ export const translations = {
 
     // Processing State
     processingVideo: '正在处理视频',
-    downloadingFromYoutube: '正在从 YouTube 下载并分析视频...',
+    downloadingFromYoutube: '正在下载并分析视频链接...',
     analyzingUploadedVideo: '正在分析上传的视频...',
     processingTimeNote: '这可能需要几分钟时间，具体取决于视频长度',
     stepDownload: '下载视频',
@@ -175,15 +175,15 @@ export const translations = {
     creatingPdf: '生成中...',
     downloadPdf: '下载 PDF',
     processNewVideo: '处理新视频',
-    helpYoutubeTitle: 'YouTube URL',
-    helpYoutubeDesc: '粘贴视频链接，我们会自动下载并分析。',
+    helpYoutubeTitle: '视频链接',
+    helpYoutubeDesc: '粘贴来自 YouTube、Bilibili 或其他 yt-dlp 支持网站的公开视频链接，我们会尽力自动下载并分析。',
     helpUploadTitle: '本地上传',
     helpUploadDesc: '上传 MP4、WebM 或其他视频格式。',
     helpSessionNote: '会话数据保存在服务器内存中。如果刷新页面，需要重新处理视频。',
 
     // Empty State
     readyToExtract: '准备提取吉他谱',
-    emptyStateDesc: '输入 YouTube 视频链接或上传本地视频文件，开始提取吉他谱截图',
+    emptyStateDesc: '输入视频链接或上传本地视频文件，开始提取吉他谱截图',
 
     // Error State
     processingFailed: '处理失败',

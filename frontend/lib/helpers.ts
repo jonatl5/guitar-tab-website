@@ -1,12 +1,11 @@
-// Validate YouTube URL
-export function isValidYouTubeUrl(url: string): boolean {
-  const patterns = [
-    /^(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=[\w-]+/,
-    /^(https?:\/\/)?(www\.)?youtu\.be\/[\w-]+/,
-    /^(https?:\/\/)?(www\.)?youtube\.com\/embed\/[\w-]+/,
-    /^(https?:\/\/)?(www\.)?youtube\.com\/v\/[\w-]+/,
-  ];
-  return patterns.some(pattern => pattern.test(url));
+// Validate general video URL input (YouTube, Bilibili, and other yt-dlp supported sites)
+export function isValidVideoUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 // Extract YouTube video ID from URL
@@ -33,6 +32,24 @@ export function getYouTubeThumbnail(videoId: string, quality: 'default' | 'mediu
     maxres: 'maxresdefault',
   };
   return `https://img.youtube.com/vi/${videoId}/${qualityMap[quality]}.jpg`;
+}
+
+export function getVideoPlatformLabel(url: string): string {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+
+    if (host.includes('youtube.com') || host.includes('youtu.be')) {
+      return 'YouTube';
+    }
+
+    if (host.includes('bilibili.com')) {
+      return 'Bilibili';
+    }
+
+    return host.replace(/^www\./, '');
+  } catch {
+    return 'Video URL';
+  }
 }
 
 // Format seconds to mm:ss

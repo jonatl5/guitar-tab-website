@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'Guitar Tab Extractor',
-  description: 'Extract guitar tab screenshots from YouTube videos and create PDF collections',
+  description: 'Extract guitar tab screenshots from video URLs or local files and create PDF collections',
   generator: 'v0.app',
   icons: {
     icon: [
