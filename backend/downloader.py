@@ -67,8 +67,13 @@ def download_video(
 
         if _is_youtube_url(normalized_url):
             if use_youtube_clients:
-                # Prefer client profiles that are more resilient to YouTube rate limits.
-                opts["extractor_args"] = {"youtube": {"player_client": ["android", "mweb", "web"]}}
+                # Avoid cookie-incompatible / PO-token-heavy clients when authenticated.
+                if cookies_file:
+                    opts["extractor_args"] = {
+                        "youtube": {"player_client": ["tv_embedded", "web_safari", "web"]}
+                    }
+                else:
+                    opts["extractor_args"] = {"youtube": {"player_client": ["tv", "web_safari", "web"]}}
 
             if prefer_youtube_video_stream:
                 # The extraction pipeline only needs frames, so a single downloadable
