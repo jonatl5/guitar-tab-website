@@ -35,9 +35,6 @@ Thumbs.db
 guitar_tabs.pdf
 *.pdf
 
-# Model files (generated Siamese checkpoint)
-backend/models/siamese_cnn.pt
-
 # Installation scripts (not needed in deployment)
 install_dependencies.*
 quick_install.*
